@@ -161,19 +161,68 @@ CREATE PROCEDURE dbo.sentMessageToUser
 	@user_id int,
     @to_user_id int,
 	@data text,
-	@media_id int
+	@media_id int = 0
 AS
 BEGIN
-	DECLARE @messageId int;
+	DECLARE @message_id int;
 
 	INSERT INTO [message]
 	([from_user_id], [data], [media_id])
 	VALUES
 	(@user_id, @data, @media_id)
-	SET @messageId = IDENT_CURRENT('message');
+	SET @message_id = IDENT_CURRENT('message')
 
+	INSERT INTO [direct_chat]
+	([user_id], [to_user_id], [message_id])
+	VALUES
+	(@user_id, @to_user_id, @message_id)
 
+	INSERT INTO [direct_chat]
+	([user_id], [to_user_id], [message_id])
+	VALUES
+	(@to_user_id, @user_id, @message_id)
 END
 GO
 
--- sentMessageToConference(user_id, conference_id, data, media_id) : procedure
+IF OBJECT_ID('sentMessageToConference', 'P' ) IS NOT NULL   
+    DROP PROCEDURE sentMessageToConference
+GO
+CREATE PROCEDURE dbo.sentMessageToConference
+	@user_id int,
+    @conference_id int,
+	@data text,
+	@media_id int = 0
+AS
+BEGIN
+	DECLARE @message_id int;
+
+	INSERT INTO [message]
+	([from_user_id], [data], [media_id])
+	VALUES
+	(@user_id, @data, @media_id)
+	SET @message_id = IDENT_CURRENT('message')
+
+	DECLARE @user_in_conf_id int
+	DECLARE users_in_conf CURSOR 
+	LOCAL STATIC READ_ONLY FORWARD_ONLY
+	FOR 
+	SELECT [user_id] FROM dbo.[users_in_conference]
+	WHERE [conference_id] = @conference_id
+
+	OPEN users_in_conf
+	FETCH NEXT FROM users_in_conf INTO @user_in_conf_id
+	WHILE @@FETCH_STATUS = 0
+	BEGIN 
+		INSERT INTO [conference_chat]
+		([user_id], [conference_id], [message_id])
+		VALUES
+		(@user_in_conf_id, @conference_id, @message_id)
+
+		-- next user
+		FETCH NEXT FROM users_in_conf INTO @user_in_conf_id
+	END
+
+	CLOSE users_in_conf
+	DEALLOCATE users_in_conf
+END
+GO

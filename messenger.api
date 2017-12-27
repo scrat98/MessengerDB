@@ -11,11 +11,6 @@
 -- getDialogsPage(user_id, page_number, dialogs_per_page) : function
 -- getDialogsCount(user_id) : function
 
--- getDialogPageByChatCode(user_id, chat_code, page_number, messages_per_page) : function
--- getCountMessagesByChatCode(user_id, chat_code) : function
--- deleteMessageFromChatCode(user_id, chat_code, message_id) : procedure
--- deleteAllMessagesFromChatCode(user_id, chat_code) : procedure
-
 -- Direct
 -- getDirectChatPage(user_id, to_user_id, page_number, messages_per_page) : function
 -- getCountDirectChatMessages(user_id, to_user_id) : function
@@ -28,12 +23,11 @@
 -- deleteMessageFromConferenceChat(user_id, conference_id, message_id) : procedure
 -- deleteAllMessagesFromConferenceChat(user_id, conference_id) : procedure
 
--- joinToConference : procedure
--- leaveConference : procedure
--- newConference : procedure
--- inviteToConference : procedure
+-- joinToConference(user_id, conference_id) : procedure
+-- leaveFromConference(user_id, conference_id) : procedure
+-- createNewConference(user_id, name) : procedure
+-- inviteUserToConference(user_id, inviting_user_id, conference_id) : procedure
 
 -- Message
--- sentMessageToChatCode(user_id, chat_code, data, media_id) : procedure
 -- sentMessageToUser(user_id, to_user_id, data, media_id) : procedure
 -- sentMessageToConference(user_id, conference_id, data, media_id) : procedure
