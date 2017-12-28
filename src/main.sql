@@ -8,7 +8,6 @@ DECLARE @user3 int
 EXEC @user1 = dbo.addUser "login1", "pass1", "name1", "email1"
 EXEC @user2 = dbo.addUser "login2", "pass2", "name2", "email2"
 EXEC @user3 = dbo.addUser "login3", "pass3", "name3", "email3"
-
 SELECT * FROM dbo.getUsers
 
 EXEC dbo.sentMessageToUser 1, 2, "Hello"
@@ -26,6 +25,8 @@ DECLARE @conf int
 EXEC @conf = dbo.createNewConference 3, "Lovely couple chat"
 EXEC dbo.inviteUserToConference 3, 1, @conf
 EXEC dbo.inviteUserToConference 3, 2, @conf
+SELECT * FROM [conference]
+SELECT * FROM [users_in_conference]
 
 EXEC dbo.sentMessageToConference 3, @conf, "U r lovely couple))"
 EXEC dbo.sentMessageToConference 2, @conf, "Idiot"

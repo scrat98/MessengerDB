@@ -1,11 +1,12 @@
 -- Media
--- deleteMediaById : procedure
--- addMedia : procedure
+-- deleteMediaById(media_id) : procedure
+-- addMedia(src) : procedure
 
 -- User
--- addUser : procedure
--- deleteUserById : procedure
--- changeUserById : procedure
+-- addUser(login, password, name, email) : procedure
+-- deleteUserById(user_id) : procedure
+-- changeUserById(user_id, login, password, name, user_img, 
+                    git, skype, phone, email, user_p_1, user_p_2) : procedure
 
 -- Dialog
 -- getDialogsPage(user_id, page_number, dialogs_per_page) : function

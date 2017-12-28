@@ -163,3 +163,73 @@ END
 GO
 
 -- Conference Chat triggers
+CREATE TRIGGER TriggerForDeleteMessageFromConferenceChat
+ON dbo.[conference_chat]
+AFTER DELETE
+AS
+BEGIN
+    DECLARE @user_id int
+    DECLARE @conference_id int
+    DECLARE @chat_code varchar(255)
+
+    SET @user_id = (SELECT DISTINCT [user_id] FROM deleted)
+    SET @conference_id = (SELECT DISTINCT [conference_id] FROM deleted)
+    SET @chat_code = CONCAT('c', @conference_id)
+
+    IF NOT EXISTS (
+        SELECT * FROM [conference_chat] 
+        WHERE [user_id] = @user_id AND [conference_id] = @conference_id)
+    BEGIN
+        DELETE FROM [dialog]
+        WHERE [user_id] = @user_id AND [chat_code] = @chat_code 
+    END ELSE
+    BEGIN
+        DECLARE @last_update datetime
+        DECLARE @message_id int
+
+        SELECT @last_update = [modify_date], @message_id = [id]
+        FROM dbo.getConferenceChatPage(@user_id, @conference_id, 1, 1)
+
+        UPDATE [dialog]
+        SET 
+            [last_update] = @last_update,
+            [last_message_id] = @message_id
+	    WHERE [user_id] = @user_id AND [chat_code] = @chat_code
+    END
+END
+GO
+
+CREATE TRIGGER TriggerForAddMessageInConferenceChat
+ON dbo.[conference_chat]
+AFTER INSERT
+AS
+BEGIN
+    DECLARE @user_id int
+    DECLARE @conference_id int
+    DECLARE @chat_code varchar(255)
+    DECLARE @message_id int
+    DECLARE @last_update datetime
+
+    SET @user_id = (SELECT DISTINCT [user_id] FROM Inserted)
+    SET @conference_id = (SELECT DISTINCT [conference_id] FROM Inserted)
+    SET @chat_code = CONCAT('c', @conference_id)
+    SET @message_id = (SELECT DISTINCT [message_id] FROM Inserted)
+    SET @last_update = (SELECT [modify_date] FROM dbo.[message] WHERE [id] = @message_id)
+
+    IF NOT EXISTS (
+        SELECT * FROM [dialog]
+        WHERE [user_id] = @user_id AND [chat_code] = @chat_code)
+    BEGIN
+        INSERT INTO [dialog]
+        ([user_id], [chat_code], [last_update], [last_message_id])
+        VALUES
+        (@user_id, @chat_code, @last_update, @message_id)
+    END
+
+    UPDATE [dialog]
+    SET 
+        [last_update] = @last_update,
+        [last_message_id] = @message_id
+	WHERE [user_id] = @user_id AND [chat_code] = @chat_code
+END
+GO

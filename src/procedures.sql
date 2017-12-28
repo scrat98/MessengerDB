@@ -148,10 +148,104 @@ BEGIN
 END
 GO
 
--- joinToConference : procedure
--- leaveConference : procedure
--- newConference : procedure
--- inviteToConference : procedure
+IF OBJECT_ID('joinToConference', 'P' ) IS NOT NULL   
+    DROP PROCEDURE joinToConference
+GO
+CREATE PROCEDURE dbo.joinToConference
+	@user_id int,
+    @conference_id int
+AS
+BEGIN
+	DECLARE @msg varchar(512)
+	DECLARE @name varchar(255)
+
+	SET @name = (SELECT [name] FROM dbo.[user] WHERE [id] = @user_id)
+	SET @msg = CONCAT(@name, ' JOIN TO CONFERENCE')
+
+	INSERT INTO dbo.[users_in_conference]
+	([conference_id], [user_id])
+	VALUES(@conference_id, @user_id)
+
+	EXEC dbo.sentMessageToConference 0, @conference_id, @msg
+END
+GO
+
+IF OBJECT_ID('leaveFromConference', 'P') IS NOT NULL   
+    DROP PROCEDURE leaveFromConference
+GO
+CREATE PROCEDURE dbo.leaveFromConference
+	@user_id int,
+    @conference_id int
+AS
+BEGIN
+	DECLARE @msg varchar(512)
+	DECLARE @name varchar(255)
+
+	SET @name = (SELECT [name] FROM dbo.[user] WHERE [id] = @user_id)
+	SET @msg = CONCAT(@name, ' LEFT CONFERENCE')
+
+	EXEC dbo.sentMessageToConference 0, @conference_id, @msg
+
+	DELETE FROM dbo.[users_in_conference]
+	WHERE [conference_id] = @conference_id AND [user_id] = @user_id
+END
+GO
+
+IF OBJECT_ID('createNewConference', 'P' ) IS NOT NULL   
+    DROP PROCEDURE createNewConference
+GO
+CREATE PROCEDURE dbo.createNewConference
+	@user_id int,
+    @conference_name varchar(255)
+AS
+BEGIN
+	DECLARE @msg varchar(512)
+	DECLARE @name varchar(255)
+
+	SET @name = (SELECT [name] FROM dbo.[user] WHERE [id] = @user_id)
+	SET @msg = CONCAT(@name, ' CREATED CONFERENCE')
+
+	DECLARE @conference_id int
+	INSERT INTO dbo.[conference] 
+	([name])
+	VALUES
+	(@conference_name)
+	SET @conference_id = IDENT_CURRENT('conference')
+
+	INSERT INTO dbo.[users_in_conference]
+	([conference_id], [user_id])
+	VALUES(@conference_id, @user_id)
+
+	EXEC dbo.sentMessageToConference 0, @conference_id, @msg
+
+	RETURN @conference_id
+END
+GO
+
+IF OBJECT_ID('inviteUserToConference', 'P' ) IS NOT NULL   
+    DROP PROCEDURE inviteUserToConference
+GO
+CREATE PROCEDURE dbo.inviteUserToConference
+	@user_id int,
+	@inviting_user_id int,
+    @conference_id int
+AS
+BEGIN
+	DECLARE @msg varchar(512)
+	DECLARE @name varchar(255)
+	DECLARE @invited_name varchar(255)
+
+	SET @name = (SELECT [name] FROM dbo.[user] WHERE [id] = @user_id)
+	SET @invited_name = (SELECT [name] FROM dbo.[user] WHERE [id] = @inviting_user_id)
+	SET @msg = CONCAT(@name, ' INVITED TO CONFERENCE ', @invited_name)
+
+	INSERT INTO dbo.[users_in_conference]
+	([conference_id], [user_id])
+	VALUES(@conference_id, @inviting_user_id)
+
+	EXEC dbo.sentMessageToConference 0, @conference_id, @msg
+END
+GO
 
 -- Sent Message
 IF OBJECT_ID('sentMessageToUser', 'P' ) IS NOT NULL   

@@ -39,12 +39,16 @@ CREATE TABLE messenger.dbo.[user] (
         [modify_date] datetime DEFAULT GETDATE()
 		)
 GO
+SET IDENTITY_INSERT dbo.[user] ON
+INSERT INTO [user] ([id], [login], [password], [name], [email]) 
+VALUES(0, 'notification', 'notification', 'notification', 'notification')
+SET IDENTITY_INSERT dbo.[user] OFF
 
 CREATE TABLE messenger.dbo.[message](
 		[id] INT PRIMARY KEY IDENTITY(1,1) NOT NULL,
-		[from_user_id] int NOT NULL FOREIGN KEY REFERENCES [user](id),
+		[from_user_id] int FOREIGN KEY REFERENCES [user](id) DEFAULT 0,
 		[data] text NOT NULL,
-		[media_id] int NOT NULL FOREIGN KEY REFERENCES [media](id),
+		[media_id] int NOT NULL FOREIGN KEY REFERENCES [media](id) DEFAULT 0,
 		[create_date] datetime DEFAULT GETDATE(),
         [modify_date] datetime DEFAULT GETDATE()
 		)
