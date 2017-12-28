@@ -40,21 +40,22 @@ CREATE TABLE messenger.dbo.[user] (
 		)
 GO
 
-CREATE TABLE messenger.dbo.[dialog](
-		[id] INT PRIMARY KEY IDENTITY(1,1) NOT NULL,
-		[user_id] int NOT NULL FOREIGN KEY REFERENCES [user](id),
-		[chat_code] varchar(255) NOT NULL,
-		[last_update] datetime NOT NULL,
-		[create_date] datetime DEFAULT GETDATE(),
-        [modify_date] datetime DEFAULT GETDATE()
-		)
-GO
-
 CREATE TABLE messenger.dbo.[message](
 		[id] INT PRIMARY KEY IDENTITY(1,1) NOT NULL,
 		[from_user_id] int NOT NULL FOREIGN KEY REFERENCES [user](id),
 		[data] text NOT NULL,
 		[media_id] int NOT NULL FOREIGN KEY REFERENCES [media](id),
+		[create_date] datetime DEFAULT GETDATE(),
+        [modify_date] datetime DEFAULT GETDATE()
+		)
+GO
+
+CREATE TABLE messenger.dbo.[dialog](
+		[id] INT PRIMARY KEY IDENTITY(1,1) NOT NULL,
+		[user_id] int NOT NULL FOREIGN KEY REFERENCES [user](id),
+		[chat_code] varchar(255) NOT NULL,
+		[last_message_id] int FOREIGN KEY REFERENCES [message](id),
+		[last_update] datetime,
 		[create_date] datetime DEFAULT GETDATE(),
         [modify_date] datetime DEFAULT GETDATE()
 		)

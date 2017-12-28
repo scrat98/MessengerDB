@@ -9,17 +9,21 @@ EXEC @user1 = dbo.addUser "login1", "pass1", "name1", "email1"
 EXEC @user2 = dbo.addUser "login2", "pass2", "name2", "email2"
 EXEC @user3 = dbo.addUser "login3", "pass3", "name3", "email3"
 
+SELECT * FROM dbo.getUsers
+
 EXEC dbo.sentMessageToUser 1, 2, "Hello"
 EXEC dbo.sentMessageToUser 1, 2, "It's me"
 EXEC dbo.sentMessageToUser 2, 1, "Nice to meet you"
 EXEC dbo.sentMessageToUser 2, 1, "How are you?"
 EXEC dbo.sentMessageToUser 2, 3, "Look, user1 he wrote to me! I love him ^_^"
 EXEC dbo.sentMessageToUser 3, 1, "User 2 love you))"
-EXEC dbo.sentMessageToUser 2, 3, "Oh, no! My wife is here. CU"
+EXEC dbo.sentMessageToUser 1, 3, "Oh, no! My wife is here. CU"
+SELECT * FROM [dialog]
+SELECT * FROM [direct_chat] JOIN [message] ON [direct_chat].message_id = [message].id
 SELECT * FROM getDialogsPage(1, 1, 10)
 
 DECLARE @conf int
-EXEC @conf = dbo.createNewConference 3, "Lovely couple"
+EXEC @conf = dbo.createNewConference 3, "Lovely couple chat"
 EXEC dbo.inviteUserToConference 3, 1, @conf
 EXEC dbo.inviteUserToConference 3, 2, @conf
 
@@ -38,4 +42,4 @@ EXEC deleteAllMessagesFromConferenceChat 1, @conf
 SELECT * FROM getDialogsPage(1, 1, 10)
 
 SELECT * FROM [conference]
-SELECT * FROM [message]
+SELECT * FROM getMessages
