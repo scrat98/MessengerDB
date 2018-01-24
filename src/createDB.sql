@@ -33,10 +33,10 @@ CREATE TABLE messenger.dbo.[user] (
 		[skype] varchar(255) NOT NULL DEFAULT '',
 		[phone] varchar(255) NOT NULL DEFAULT '',
 		[email] varchar(255) NOT NULL UNIQUE,
-		[user_p_1] varchar(255) NOT NULL DEFAULT '',
-		[user_p_2] varchar(255) NOT NULL DEFAULT '',
+		[about] varchar(255) NOT NULL DEFAULT '',
+		[own_site] varchar(255) NOT NULL DEFAULT '',
 		[create_date] datetime DEFAULT GETDATE(),
-        [modify_date] datetime DEFAULT GETDATE()
+    [modify_date] datetime DEFAULT GETDATE()
 		)
 GO
 SET IDENTITY_INSERT dbo.[user] ON
@@ -50,7 +50,7 @@ CREATE TABLE messenger.dbo.[message](
 		[data] text NOT NULL,
 		[media_id] int NOT NULL FOREIGN KEY REFERENCES [media](id) DEFAULT 0,
 		[create_date] datetime DEFAULT GETDATE(),
-        [modify_date] datetime DEFAULT GETDATE()
+    [modify_date] datetime DEFAULT GETDATE()
 		)
 GO
 
@@ -61,7 +61,7 @@ CREATE TABLE messenger.dbo.[dialog](
 		[last_message_id] int FOREIGN KEY REFERENCES [message](id),
 		[last_update] datetime,
 		[create_date] datetime DEFAULT GETDATE(),
-        [modify_date] datetime DEFAULT GETDATE()
+    [modify_date] datetime DEFAULT GETDATE()
 		)
 GO
 
@@ -69,7 +69,7 @@ CREATE TABLE messenger.dbo.[conference](
 		[id] INT PRIMARY KEY IDENTITY(1,1) NOT NULL,
 		[name] varchar(255) NOT NULL,
 		[create_date] datetime DEFAULT GETDATE(),
-        [modify_date] datetime DEFAULT GETDATE()
+    [modify_date] datetime DEFAULT GETDATE()
 		)
 GO
 
@@ -78,7 +78,7 @@ CREATE TABLE messenger.dbo.[users_in_conference](
 		[conference_id] INT NOT NULL FOREIGN KEY REFERENCES [conference](id),
 		[user_id] INT NOT NULL FOREIGN KEY REFERENCES [user](id),
 		[create_date] datetime DEFAULT GETDATE(),
-        [modify_date] datetime DEFAULT GETDATE()
+    [modify_date] datetime DEFAULT GETDATE()
 		)
 GO
 
@@ -88,7 +88,7 @@ CREATE TABLE messenger.dbo.[direct_chat](
 		[to_user_id] INT NOT NULL FOREIGN KEY REFERENCES [user](id),
 		[message_id] INT NOT NULL FOREIGN KEY REFERENCES [message](id),
 		[create_date] datetime DEFAULT GETDATE(),
-        [modify_date] datetime DEFAULT GETDATE()
+    [modify_date] datetime DEFAULT GETDATE()
 		)
 GO
 
@@ -98,7 +98,7 @@ CREATE TABLE messenger.dbo.[conference_chat](
 		[conference_id] INT NOT NULL FOREIGN KEY REFERENCES [conference](id),
 		[message_id] INT NOT NULL FOREIGN KEY REFERENCES [message](id),
 		[create_date] datetime DEFAULT GETDATE(),
-        [modify_date] datetime DEFAULT GETDATE()
+    [modify_date] datetime DEFAULT GETDATE()
 		)
 GO
 

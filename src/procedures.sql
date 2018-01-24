@@ -35,7 +35,7 @@ IF OBJECT_ID('addUser', 'P' ) IS NOT NULL
 GO
 CREATE PROCEDURE dbo.addUser
 	@login varchar(255),
-    @password varchar(255),
+  @password varchar(255),
 	@name varchar(255),
 	@email varchar(255)
 AS
@@ -73,8 +73,8 @@ CREATE PROCEDURE dbo.changeUserById
 	@skype varchar(255),
 	@phone varchar(255),
 	@email varchar(255),
-	@user_p_1 varchar(255),
-	@user_p_2 varchar(255)
+	@about varchar(255),
+	@own_site varchar(255)
 AS
 BEGIN
 	UPDATE [user]
@@ -86,8 +86,8 @@ BEGIN
 		[skype] = @skype,
 		[phone] = @phone,
 		[email] = @email,
-		[user_p_1] = @user_p_1,
-		[user_p_2] = @user_p_2
+		[about] = @about,
+		[own_site] = @own_site
 	WHERE id = @id
 END
 GO
@@ -98,7 +98,7 @@ IF OBJECT_ID('deleteMessageFromDirectChat', 'P' ) IS NOT NULL
 GO
 CREATE PROCEDURE dbo.deleteMessageFromDirectChat
 	@user_id int,
-    @to_user_id int,
+  @to_user_id int,
 	@message_id int
 AS
 BEGIN
@@ -297,7 +297,7 @@ BEGIN
 	SET @message_id = IDENT_CURRENT('message')
 
 	DECLARE @user_in_conf_id int
-	DECLARE users_in_conf CURSOR 
+	DECLARE users_in_conf CURSOR
 	LOCAL STATIC READ_ONLY FORWARD_ONLY
 	FOR 
 	SELECT [user_id] FROM dbo.[users_in_conference]
